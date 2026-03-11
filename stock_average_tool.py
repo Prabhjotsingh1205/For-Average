@@ -98,7 +98,7 @@ def process_stock_data(source_db_files, output_db_file, table_name, columns):
 if __name__ == "__main__":
     # Configuration
     # You can change these file names if your databases are named differently
-    SOURCE_DBS = ['stock_summary06_03.db', 'stock_summary07_03.db']
+    SOURCE_DBS = ['stock_summary06_03.db', 'stock_summary05_03.db']
     OUTPUT_DB = 'stock_averages.db'
     TABLE = 'latest_stock_data'
 
