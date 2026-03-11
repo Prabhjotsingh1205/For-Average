@@ -4,14 +4,15 @@ import os
 def create_average_db(source_db_files, output_db_file, table_name, columns):
     """
     Groups data from source_db_files by 'symbol' and calculates the
-    average for each column in 'columns', then saves it to output_db_file.
+    average of the absolute values for each column in 'columns',
+    then saves it to output_db_file.
     """
     # Create the output database and table
     if os.path.exists(output_db_file):
         os.remove(output_db_file)
 
     # Temporary storage for all stock data
-    # { 'SYMBOL': { 'col1': [v1, v2], 'col2': [v1, v2] } }
+    # { 'SYMBOL': { 'col1': [abs_v1, abs_v2], 'col2': [abs_v1, abs_v2] } }
     stock_data = {}
 
     # Extract data from source databases
@@ -24,9 +25,9 @@ def create_average_db(source_db_files, output_db_file, table_name, columns):
             conn = sqlite3.connect(db_file)
             cursor = conn.cursor()
 
-            # Select all symbols and the columns we care about
-            cols_str = ", ".join(columns)
-            query = f"SELECT symbol, {cols_str} FROM {table_name}"
+            # Select symbols and the absolute values of the target columns
+            abs_cols_str = ", ".join([f"ABS({col})" for col in columns])
+            query = f"SELECT symbol, {abs_cols_str} FROM {table_name}"
             cursor.execute(query)
 
             for row in cursor.fetchall():
@@ -59,6 +60,7 @@ def create_average_db(source_db_files, output_db_file, table_name, columns):
         for col in columns:
             vals = cols[col]
             if vals:
+                # Average of absolute values
                 row_values.append(sum(vals) / len(vals))
             else:
                 row_values.append(None)
